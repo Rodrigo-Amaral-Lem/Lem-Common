@@ -1,16 +1,28 @@
-# LEM Common — contrato, recursos e ferramentas partilhados
+# LEM Common
 
-- `shared/`: checklist, casos de teste de conectores/medições e branding já incorporado no produto. É a origem canónica das cópias em App e Server.
-- `tools/`: sincronização de recursos e ferramentas comuns de auditoria.
-- `docs/`: documentação transversal e histórico que afeta cliente e servidor.
+The shared contract, resources, maintenance tools and cross-component documentation for the LEM
+client and server. The current source is labelled **0.1.57**, with checklist **6** and the
+subsequently approved fixes included.
 
-Usar `../ongoing_work/` para comandos, builds e resultados temporários. A partir desse diretório:
+| Guide | Use it for |
+| --- | --- |
+| [Workspace](docs/workspace.md) | Repository ownership, Git review, shared snapshots, branding and generated files |
+| [Report contract](docs/report-contract.md) | Current groups, required/optional fields, measurements, evidence, copies and signatures |
+| [Maintenance](docs/maintenance.md) | Common tools, documentation checks, test coordination and release changes |
+| [Security and limits](docs/security.md) | Implemented safeguards, configured resource limits and known boundaries |
+
+`shared/` is canonical. `App/shared/` and `Server/shared/` are tracked copies for independent
+builds/deployments. Run tools from `ongoing_work`:
 
 ```powershell
-python ../Common/tools/sync_shared.py          # verificar
-python ../Common/tools/sync_shared.py --write  # publicar alterações locais nas cópias versionadas
+python ../Common/tools/sync_shared.py
+python ../Common/tools/check_docs.py
 ```
 
-Os três repositórios usam cópias explícitas dos recursos para permitir clones e releases independentes, sem symlinks, submódulos ou dependências de caminhos externos na execução. Rever os diffs e fazer commit em cada repositório afetado ao alterar o contrato.
+The first command checks byte equality without writing. To publish an intentional shared-resource
+change, use `sync_shared.py --write`, inspect all affected Git diffs and stage/commit according to
+the current review instruction. No remote repositories are configured by this documentation.
 
-Consultar [organização e migração](docs/repository-layout.md). Os repositórios são locais, sem remotes configurados. Os ZIPs existentes permanecem como arquivo das versões anteriores; o trabalho futuro é feito por Git.
+Component-specific guides are in [App](../App/README.md) and [Server](../Server/README.md).
+Historical release-note files are no longer part of the current reading path; Git history retains
+the previous documentation.

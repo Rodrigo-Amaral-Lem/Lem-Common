@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# Legacy audit CLI: BASELINE_ZIP --source MATCHING_RECONSTRUCTED_TREE; requires Pygments.
+# Read-only comparison for comment/format-only edits, not functional release changes.
+# The default source root is Common, which is not the old monorepository; always pass --source here.
+# See docs/maintenance.md for scope and limitations.
+
 """Compare a documented source tree with its original release ZIP.
 
 This is a review aid, not a compiler or proof of runtime equivalence. Python
