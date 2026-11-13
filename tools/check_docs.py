@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-only
+# Part of LEM. See the accompanying LICENSE for license terms and warranty disclaimer.
+
 """Check local Markdown links in the maintained LEM documentation.
 
 Run from ongoing_work: python ../Common/tools/check_docs.py

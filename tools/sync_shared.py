@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Part of LEM. See the accompanying LICENSE for license terms and warranty disclaimer.
+
 # Workspace tool: default read-only comparison; --write publishes canonical Common/shared snapshots.
 # Requires sibling App and Server roots. Never deletes unexpected files; nonzero means review is needed.
 # Writes are not transactional across repositories: inspect all diffs after an interrupted/failed --write.

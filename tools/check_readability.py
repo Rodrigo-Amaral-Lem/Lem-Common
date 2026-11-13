@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-3.0-only
+# Part of LEM. See the accompanying LICENSE for license terms and warranty disclaimer.
+
 # Legacy audit CLI: BASELINE_ZIP --source MATCHING_RECONSTRUCTED_TREE; requires Pygments.
 # Read-only comparison for comment/format-only edits, not functional release changes.
 # The default source root is Common, which is not the old monorepository; always pass --source here.

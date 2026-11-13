@@ -26,3 +26,14 @@ the current review instruction. No remote repositories are configured by this do
 Component-specific guides are in [App](../App/README.md) and [Server](../Server/README.md).
 Historical release-note files are no longer part of the current reading path; Git history retains
 the previous documentation.
+
+## License
+
+First-party LEM source code, tests, build/deployment tools, configuration, schemas and accompanying
+project documentation are licensed under the **GNU General Public License, version 3 only**
+(`GPL-3.0-only`). See [LICENSE](LICENSE) for the complete terms and warranty disclaimer.
+
+Source files carry SPDX notices. JSON data keeps its original strict format and has adjacent
+`.json.license` notices. Existing third-party license notices remain applicable; this declaration
+does not relicense Qt, Python dependencies, bundled fonts or third-party customer artwork/trademarks.
+Generated reports and customer data are not relicensed by this source-code notice.

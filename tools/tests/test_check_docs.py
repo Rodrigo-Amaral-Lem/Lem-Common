@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-only
+# Part of LEM. See the accompanying LICENSE for license terms and warranty disclaimer.
+
 """Read-only local-link checker regressions. Run with unittest discovery."""
 import importlib.util
 from pathlib import Path
