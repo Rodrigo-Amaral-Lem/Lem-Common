@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-10",
+  "environment": "Linux x86_64; Python 3.12.14; SQLite temporary databases; loopback only",
+  "baseline": "0.1.33",
+  "candidate": "0.1.34",
+  "import": {
+    "before": {
+      "rows": 1000,
+      "reimport_ms": [
+        399.96,
+        315.15,
+        299.19
+      ],
+      "median_ms": 315.15,
+      "charger_selects": [
+        1000,
+        1000,
+        1000
+      ],
+      "result": {
+        "created": 0,
+        "updated": 1000
+      }
+    },
+    "after": {
+      "rows": 1000,
+      "reimport_ms": [
+        100.09,
+        156.9,
+        99.79
+      ],
+      "median_ms": 100.09,
+      "charger_selects": [
+        1,
+        1,
+        1
+      ],
+      "result": {
+        "created": 0,
+        "updated": 1000
+      }
+    }
+  },
+  "responsiveness": {
+    "before": {
+      "simulated_analysis_ms": 750,
+      "concurrent_health_ms": [
+        754.95,
+        751.63,
+        752.07
+      ],
+      "median_health_ms": 752.07
+    },
+    "after": {
+      "simulated_analysis_ms": 750,
+      "concurrent_health_ms": [
+        1.95,
+        1.45,
+        1.18
+      ],
+      "median_health_ms": 1.45
+    }
+  }
+}
