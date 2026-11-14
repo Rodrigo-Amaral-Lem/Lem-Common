@@ -85,6 +85,11 @@ Permanent report deletion produces tombstones, and expired/purged contract data 
 old client cache. Backup retention, off-host copies and tested restoration are operational
 responsibilities; the presence of a backup command does not prove recoverability.
 
+If a local checkpoint or edit journal cannot be read or has an incomplete report structure, the
+client suspends checkpoint/journal writes, synchronization and cleanup instead of replacing it with empty state. The
+files remain recovery evidence; this safeguard is not an automatic repair or a substitute for a
+backup. Automatic evidence eviction excludes conflicted/unconfirmed reports and pending deletions.
+
 ## Code to inspect when changing a safeguard
 
 - Server: [security.py](../../Server/server/app/security.py),
