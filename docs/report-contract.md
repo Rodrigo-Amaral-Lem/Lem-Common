@@ -9,11 +9,11 @@ superseded behavior of older version notes.
 | Order | Group | Current items before connector expansion |
 | --- | --- | --- |
 | 1 | SEG — Segurança | SEG.01–SEG.07 |
-| 2 | SITE | SITE.01–SITE.05 |
+| 2 | SITE | SITE.01–SITE.06 |
 | 3 | QVE | QVE.01–QVE.14 |
-| 4 | EST — Estado Geral | EST.01–EST.17 |
+| 4 | EST — Estado Geral | EST.01–EST.18 |
 | 5 | MAN | MAN.01–MAN.21 |
-| 6 | CARG | One CARG.01.xx per connector, plus CARG.04–CARG.06 |
+| 6 | CARG | One CARG.01.xx per connector, plus CARG.04–CARG.07 |
 | 7 | FIN | FIN.01–FIN.03 |
 
 Answers live in `payload.answers[checkpoint]`:
@@ -42,19 +42,28 @@ number.
 | `photo_always` | Do not exempt the photograph for N/A |
 | `na_notes_required` | N/A needs an explanation |
 | `notes_disabled`, `media_disabled` | Hide observation/attachment controls; existing historical data is not silently deleted |
+| `na_notes_default` | Editable suggestion when entering N/A with empty notes; unchanged suggestion is removed when leaving N/A |
+| `notes_button_hidden` | Hide the observation toggle; required fields still open automatically |
+| `notes_visible` | Keep the observation field visible, including FIN.02 without general media controls |
 | `supports_signature` | Allow a signer name and referenced signature evidence |
 
 ## Current exceptions and optional fields
 
-- **SEG.02–SEG.06:** status choices remain, but no new observation/media controls. NOK does not
-  require an observation here.
+- **SEG.01:** N/A requires an observation explaining why the safety area is not applicable; N/A still exempts the photograph.
+- **SEG.02–SEG.06:** NOK requires an observation, shown automatically without an observation button.
+  SEG.02 and SEG.04 also require an observation for N/A. New media controls remain hidden.
 - **SEG.07 — Observações gerais de segurança:** optional note and media, no status buttons.
+- **SITE.06 — Observações gerais do local:** optional note, photographs and videos, no status buttons.
 - **QVE.14 — QVE - Observações gerais:** optional note, photographs and videos, no status buttons.
 - **MAN.21 — Observações gerais da manutenção:** optional note, photographs and videos, no status
   buttons.
 - **EST.04:** accepts multiple charger/dispenser serial numbers in one text field; photograph is
   optional.
-- **MAN.12:** requires an entered current-trip result or N/A, with a photograph **even for N/A**.
+- **EST.18 — Observações gerais do equipamento:** optional note, photographs and videos, no status buttons.
+- **CARG.07:** optional general observations, photographs and videos, no status buttons.
+- **FIN.02:** general media controls are hidden; notes and dedicated signature controls remain available.
+- **MAN.02:** OK/NOK/N/A; NOK requires an observation, N/A does not.
+- **MAN.12:** requires an entered current-trip result or N/A, with a photograph when applicable. N/A requires an observation but exempts the photograph.
   OK/NOK is an independent evaluation and cannot fill the value.
 - **MAN.14–MAN.17:** require a manually entered insulation result or N/A. Instrument text such as
   `>500 MΩ` or `OL` remains possible; do not impose the voltage grammar on these fields.
@@ -63,8 +72,7 @@ number.
   alone cannot satisfy closure.
 - **MAN.19:** status choices OK/NOK/N/A.
 
-NOK normally requires an observation when selected as the value or separate assessment, except the
-disabled-note SEG items. Selecting N/A clears an independent assessment. Returning from N/A to an
+NOK normally requires an observation when selected as the value or separate assessment, including SEG.02–SEG.06. Selecting N/A clears an independent assessment. Returning from N/A to an
 evaluation requires re-entering the reading. An empty temporary numeric edit does not silently
 remove an assessment.
 
@@ -90,7 +98,7 @@ finished value.
 
 The template's required-photo items are SEG.01, SITE.02–SITE.04, QVE.01/QVE.04,
 EST.01/EST.05/EST.06/EST.13/EST.16, MAN.04–MAN.10/MAN.12, each generated CARG.01.xx, CARG.05 and
-FIN.01. N/A generally exempts a photograph; MAN.12 is the `photo_always` exception.
+FIN.01. N/A exempts a photograph, including MAN.12.
 
 Connector configuration expands one CARG.01.xx per physical connector, including repeated types.
 Known aliases normalize to common names; invalid counts/types are rejected. The implementation
@@ -141,3 +149,23 @@ optional.
 The server exports closed reports using saved snapshots/templates. ZIP contains the PDF, report JSON
 and original media arranged by checkpoint; PDF and local rendering retain the reading and
 independent assessment. Evidence limits and security boundaries are in [Security](security.md).
+
+## N/A observations and suggestions
+
+N/A requires an observation in SEG.01/02/04, SITE.02–04, QVE.02/04/09–12, EST.01/16/17,
+MAN.12/13/18/20, each CARG.01 connector and CARG.05. `na_notes_default` supplies an editable
+suggestion only on transition into N/A with empty notes. Existing notes are preserved; clearing
+a suggestion remains possible and leaves the item pending. The server validates the submitted
+observation without generating an unconfirmed explanation.
+
+When leaving N/A (OK, NOK or clearing), the client removes notes only when they exactly match
+that item's `na_notes_default`; custom notes remain. Generated CARG.01 connector items inherit
+“Veículo usado não compatível”. MAN.11/12 use “intensidade”; MAN.18 displays NA in its value field
+when N/A is selected, retaining the existing not-applicable storage representation.
+
+QVE.03 has an optional N/A suggestion; it does not require an N/A observation. Legacy free text
+in a status item (such as MAN.02) stays available until the technician chooses OK/NOK/N/A. Local
+review, local closure and the server reject other status values rather than closing locally and
+failing only on upload.
+
+FIN.02 requires a technician signature to close current v6 reports. Unsigned drafts can be saved. The signature must match the technician name and reference a PNG attached to FIN.02; changing the name requires signing again. Existing v6 drafts receive this rule; closed history is preserved.

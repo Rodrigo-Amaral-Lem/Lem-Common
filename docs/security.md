@@ -2,8 +2,8 @@
 
 This guide describes what the current source enforces and its boundaries. It is not a claim of a
 fresh dependency-vulnerability audit or a certification of an installed Qt/OS/container build.
-Detailed audit outputs and dated measurements belong under `ongoing_work`, not in the maintained
-reading path.
+Keep detailed audit outputs and dated measurements in an ignored local `build/` directory,
+separate from the maintained reading path.
 
 ## Authentication and deployment boundary
 
@@ -36,15 +36,16 @@ Binary-size limits below use MiB/KiB unless explicitly marked as the proxy's con
 | --- | --- |
 | Login request body | 4 KiB |
 | Other JSON/body requests | 512 KiB |
-| Multipart request body | 21 MiB; evidence itself remains capped at 20 MiB |
-| Caddy request body | Configured as `25MB` |
-| Photograph/video file | 20 MiB |
+| Multipart request body | 61 MiB; photographs remain capped at 20 MiB and videos at 60 MiB |
+| Caddy request body | Configured as `65MB` |
+| Photograph file | 20 MiB |
+| Video file | 60 MiB |
 | Server image inspection | JPEG/PNG, maximum 40 million pixels |
-| Video | MP4/3GP, one supported video stream, maximum 4K-area frame; 60.5-second inspection ceiling allows timestamp rounding around 60-second capture |
+| Video | MP4/3GP, one supported video stream, maximum 4K-area frame; 120.5-second inspection ceiling allows timestamp rounding around 120-second capture |
 | Video probe | `ffprobe`, file/pipe protocols only, 10-second subprocess timeout |
-| Report evidence | Up to 200 items and 250 MiB total |
-| Client photo download reply | 20 MiB |
-| Client PDF/ZIP reply | 350 MiB |
+| Report evidence | Up to 200 items and 400 MiB total |
+| Client evidence download reply | 60 MiB; photograph validation remains capped at 20 MiB |
+| Client PDF/ZIP reply | 500 MiB |
 | Other client replies | 64 MiB |
 | Answer value/notes | Up to 8,000 characters each at the API boundary |
 | Export admission | Default 2 slots, configured maximum 4 |

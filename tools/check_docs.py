@@ -4,7 +4,7 @@
 
 """Check local Markdown links in the maintained LEM documentation.
 
-Run from ongoing_work: python ../Common/tools/check_docs.py
+Run from the Common repository root: python tools/check_docs.py
 Use --repo App (repeatable) to narrow the documents, or --workspace PATH to
 check another sibling-repository workspace. Uses only the standard library.
 It reads files without modifying them or fetching external URLs. Exit 0 means

@@ -1,8 +1,8 @@
 # Maintenance and common tools
 
-Run workstation commands from `ongoing_work`. Keep outputs and detailed review/test evidence there.
-The current documentation is one README plus four focused guides per repository; update these files
-rather than adding a document for each patch.
+Run workstation commands from the **Common repository root**. Keep generated reports and
+temporary inputs in ignored `build/` subdirectories. Update the focused guides and platform
+manuals rather than adding a new document for each patch.
 
 ## Common tool catalogue
 
@@ -14,10 +14,10 @@ rather than adding a document for each patch.
 | [check_readability.py](../tools/check_readability.py) | Python plus Pygments, original ZIP and a matching reconstructed source tree | Historical structural-comparison report for comment/format-only work; nonzero if executable structure differs |
 
 ```powershell
-python ../Common/tools/sync_shared.py
-python ../Common/tools/check_docs.py
-python ../Common/tools/check_docs.py --repo App --repo Common
-python -m unittest discover -s ../Common/tools/tests -v
+python tools/sync_shared.py
+python tools/check_docs.py
+python tools/check_docs.py --repo App --repo Common
+python -m unittest discover -s tools/tests -v
 ```
 
 `check_docs.py` defaults to App, Server and Common under the workspace containing its repository.
@@ -28,8 +28,8 @@ rendering. A missing sibling link fails even if only one repository was selected
 The legacy readability tool expects ZIP entries under one top-level package directory and source
 paths with the old inner `app/`, `server/` structure. Its default `--source` is Common's root,
 which is **not** a reconstructed monorepository. To use it, explicitly assemble/select a matching
-tree under `ongoing_work` and pass `--source`; do not interpret missing current-split paths as an
-application defect. Functional changes should fail that comparison by design. It is not a
+tree under `build/readability-source/` and pass `--source`; do not interpret missing current-split
+paths as an application defect. Functional changes should fail that comparison by design. It is not a
 replacement for tests or Git review.
 
 ## Documentation and comments
@@ -52,7 +52,7 @@ Before staging documentation:
 3. Check Markdown headings, tables, fenced commands and UTF-8 text.
 4. Review source edits for comment/format-only scope; an updated diagnostic documentation path is
    not a functional algorithm change.
-5. Keep per-run artifacts under `ongoing_work`, then inspect the staged diff in each repository.
+5. Keep per-run artifacts under ignored `build/` directories, then inspect each repository's staged diff.
 6. Stop at staging when review was requested. Do not commit just because checks passed.
 
 ## Test coordination and formatting
@@ -70,7 +70,7 @@ unrelated documentation edit.
 Examples, when those optional developer tools are installed:
 
 ```powershell
-python -m black ../Common/tools/sync_shared.py
+python -m black tools/sync_shared.py
 clang-format -i ../App/app/src/Checklist.h
 ```
 

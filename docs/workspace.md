@@ -1,81 +1,80 @@
-# Workspace and repository ownership
+# Repository ownership and shared development
 
-The workspace is deliberately split into three local Git repositories. Open the repository relevant
-to the change, and keep command working directories and generated output under `ongoing_work`.
+LEM is split into three Git repositories. Work from the root of the repository being changed.
+Each repository documents its own commands; no personal workspace directory is required.
 
-| Directory | Owner and contents |
+| Repository | Owner and contents |
 | --- | --- |
-| `App/` | Qt client in `app/`, client guides and a tracked `shared/` snapshot |
+| `App/` | Qt client in `app/`, client guides, Android/desktop user manuals and a tracked `shared/` snapshot |
 | `Server/` | API in `server/`, installation/operations in `deploy/`, server guides, examples and a tracked `shared/` snapshot |
 | `Common/` | Canonical `shared/` resources, common `tools/` and cross-component guides |
-| `ongoing_work/` | Build trees, environments, test databases, logs, audits and temporary scripts; not a product repository |
-| `Brand_Images/` | User-managed customer-brand input resources; not an implicit runtime dependency |
 
-Existing source ZIPs at the workspace root are archive artifacts. Do not produce more unless
-requested. Do not create a fourth Git repository around the workspace or version generated
-dependencies/builds. The root remains for organized repositories, resources and final artifacts.
+## Working directories and outputs
 
-## Current baseline and source paths
+Commands in the App, Server and Common guides start at their respective repository roots.
+Use `.venv/` for local Python environments and ignored `build/` subdirectories for build trees,
+staging folders, disposable test data and per-run reports. Keep credentials, production data and
+backups private and out of Git. An ignored build directory is not a backup of unsent customer work.
 
-The migration imported the approved `Lem_Qt_0.1.57_GeneralNotesAndSignaturePhoto.zip`. Initial
-commits are App `dba527e`, Server `e642242` and Common `1555e41`. The repository layout retains
-`app/`, `server/`, `deploy/` and `shared/` internally because build/deployment code uses those
-paths.
+Installed SDKs, compilers, Docker and Python are prerequisites, not sibling source directories.
+Set their paths for the chosen machine rather than copying another developer's absolute paths.
+After moving source or changing Qt/compiler/generator, configure a fresh build instead of reusing
+a cache with old absolute paths. See [App builds](../../App/docs/build-and-release.md).
 
-Application/API version declarations remain `0.1.57`; Android version code is 170 and checklist
-version is 6. These identifiers do not automatically change because documentation or repository
-organization changes. A future release must update and verify the relevant declarations together.
+## Companion repositories
 
-The repositories are on branch `main`. Local Git identity is
-`Rodrigo Amaral <rodrigo.amaral@lem.com.pt>`. No remote was created/published, and identity
-settings were not changed globally. Do not commit or publish while the user has asked for staged
-review only.
+Cross-component tools normally expect sibling checkouts named `App`, `Server` and `Common` under
+one parent. This convention is required only by the relevant cross-repository checks; the client
+and server each ship a tracked shared-resource snapshot for independent builds and deployment.
+
+App network-integration runners locate the sibling Server repository or `LEM_SERVER_REPO`.
+Server's release-alignment test locates the sibling App repository or `LEM_APP_REPO`. These
+variables point to repository roots, not the inner `app/` or `server/` directories. See the
+[App test guide](../../App/docs/testing.md) and [Server test guide](../../Server/docs/testing.md).
 
 ## Shared resources
 
-`Common/shared` owns the checklist, measurement/connector test cases and existing shared LEM logo.
-`App/shared` and `Server/shared` are tracked snapshots, so each component can build/deploy without a
-sibling checkout at runtime.
+`Common/shared` owns the checklist, measurement/connector test cases and shared LEM logo.
+`App/shared` and `Server/shared` are tracked snapshots.
 
-1. Edit the canonical file in Common.
-2. Run `python ../Common/tools/sync_shared.py` from `ongoing_work` to inspect differences.
-3. Run `python ../Common/tools/sync_shared.py --write` only for the intended update.
-4. Review App, Server and Common diffs; run the affected validation tests.
-5. Stage the related snapshots together. Make commits only after the applicable review/approval.
+From the Common repository root:
 
-The synchronizer does not delete unexpected files and is not a transactional multi-repository
-publish. A failed `--write` can have updated earlier files before encountering another problem;
-inspect every repository after a failure. Do not fix a schema mismatch by copying a component
-snapshot back over the canonical file without reviewing why it differs.
+```powershell
+python tools/sync_shared.py
+```
 
-## Branding inputs and product assets
+The default command compares without writing. For an intentional canonical change:
 
-`Brand_Images` belongs to the user. Adding a customer image there does not automatically include it
-in builds or reports. Incorporate a chosen resource deliberately into the responsible repository
-when implementing a requested feature, and record its provenance/usage. Preserve the existing app
-masters and platform derivatives described in [App assets](../../App/app/assets/README.md).
+1. Edit the resource under `shared/` in Common.
+2. Run `python tools/sync_shared.py --write` to publish the snapshots.
+3. Review App, Server and Common diffs and run the affected validation tests.
+4. Stage the related changes in each repository and follow the project's commit/review process.
 
-## Working directories and cross-repository tests
+The synchronizer never deletes unexpected files and is not a transactional multi-repository
+publish. A failed write may have updated earlier files; inspect all affected repositories.
+Do not copy a component snapshot over Common without reviewing why it differs.
 
-Keep CMake builds and environments outside Git trees. After moving source or changing
-Qt/compiler/generator, configure a new build under `ongoing_work` instead of reusing an old cache
-with absolute paths. Open `App/app/CMakeLists.txt` in Qt Creator.
+## Version and branding ownership
 
-Most component tests work independently. App network-integration runners locate the sibling Server
-repository or `LEM_SERVER_REPO`; Server's release-alignment test locates the sibling App repository
-or `LEM_APP_REPO`. These environment variables point to repository roots, not their inner `app/` or
-`server/` directories.
+The current application/API version is `0.2.0`, Android version code is 171 and checklist version
+is 6. Documentation edits do not change these application versions. Coordinate a future release's
+declarations and validation across the components; see [Maintenance](maintenance.md).
+
+Brand assets must be deliberately incorporated into the responsible repository with their usage
+and provenance recorded. Adding an image to a developer's local folders does not include it in
+the app or reports. Preserve the masters and platform derivatives described in
+[App assets](../../App/app/assets/README.md), and respect third-party artwork/trademark rights.
 
 ## Documentation ownership
 
-Each repository has one README and four focused guides. App owns build/client
-internals/workflows/tests; Server owns API/deployment/administration/tests; Common owns
-workspace/contract/maintenance/security. `Server/deploy` retains a tool index and uninstall
-procedure useful with the installation payload, and App assets have a short provenance guide beside
-the files.
+App owns client build, architecture, field workflow, testing and end-user manuals. Server owns API,
+deployment, administration and testing. Common owns shared contracts, maintenance and security.
+`Server/deploy` retains a tool index and uninstall procedure that travel with installation payloads.
 
-Update existing guides when current behavior changes. Detailed audits, screenshots, intermediate
-drafts and per-run test records belong in `ongoing_work/documentation-review` or another clearly
-named working directory, not a new version-named document in a product repository. Git history
-preserves old explanations; current guides must not rely on a reader reconciling conflicting old
-release notes.
+Keep executable examples relative to the owning repository root. Reference a companion repository
+explicitly when a cross-component operation requires it. Local agent instructions, private audit
+folders and machine-specific checkout paths are not product prerequisites.
+
+Update existing focused guides rather than accumulating version-named notes. Git history preserves
+older explanations. Detailed audits, intermediate screenshots, draft documents and test transcripts
+belong in ignored `build/` directories; final user manuals belong in App's maintained documentation.

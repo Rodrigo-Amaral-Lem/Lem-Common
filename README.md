@@ -1,7 +1,7 @@
 # LEM Common
 
 The shared contract, resources, maintenance tools and cross-component documentation for the LEM
-client and server. The current source is labelled **0.1.57**, with checklist **6** and the
+client and server. The current source is labelled **0.2.0**, with checklist **6** and the
 subsequently approved fixes included.
 
 | Guide | Use it for |
@@ -12,11 +12,11 @@ subsequently approved fixes included.
 | [Security and limits](docs/security.md) | Implemented safeguards, configured resource limits and known boundaries |
 
 `shared/` is canonical. `App/shared/` and `Server/shared/` are tracked copies for independent
-builds/deployments. Run tools from `ongoing_work`:
+builds/deployments. Run tools from the **Common repository root**:
 
 ```powershell
-python ../Common/tools/sync_shared.py
-python ../Common/tools/check_docs.py
+python tools/sync_shared.py
+python tools/check_docs.py
 ```
 
 The first command checks byte equality without writing. To publish an intentional shared-resource
