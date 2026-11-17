@@ -10,6 +10,13 @@ separate from the maintained reading path.
 The server stores salted scrypt password representations and SHA-256 session-token digests, not
 recoverable plaintext passwords/raw session tokens. The API requires passwords of at least 12
 characters; sessions expire after 30 days and explicit logout/password-reset paths revoke them.
+
+The app's `PUT /api/users/{user_id}/password` action is administrator-only and accepts only current
+`tech` targets (12–200 characters). The server filters the target role before obtaining a credential
+write lock, rechecks against concurrent role changes, and atomically updates the salted hash,
+deletes all target sessions and audits actor/target without credentials. Login/authentication share
+the same User-row lock, so a racing old login cannot retain a usable session after reset. Administrator
+password recovery remains a server-console operation. Reports and assignments are not modified.
 Client bearer tokens are kept in memory; offline identity/cache data remain on disk.
 
 Login uses separate pair/IP/account buckets over a 60-second window: 5 per pair, 30 per IP, 20 per
@@ -50,6 +57,13 @@ Binary-size limits below use MiB/KiB unless explicitly marked as the proxy's con
 | Answer value/notes | Up to 8,000 characters each at the API boundary |
 | Export admission | Default 2 slots, configured maximum 4 |
 | Image/media admission | Default 1 slot, configured maximum 2 |
+| Original-evidence download admission | Default 8 simultaneous responses per API worker, configured maximum 16 |
+
+Evidence downloads release the database connection before sending and retain a separate response
+slot to bound memory. Single-byte-range requests enforce the same contract/report access as full
+downloads. Client evidence requests use four concurrent transfers, bounded disk staging and at most
+three automatic retries. SHA-256 verification precedes publishing an original. PDF/ZIP replies also
+use disk staging; local ZIP output rejects unsafe member names and checks original digests.
 
 A video does not count as a photograph for required-photo validation. The server inspects bytes
 rather than trusting an extension or claimed MIME. Failure to find `ffprobe` is an
