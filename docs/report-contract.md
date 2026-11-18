@@ -246,11 +246,14 @@ permanent deletion and correction replacement remain distinct operations.
 
 Changing EST.02/03/04 in a closed-report correction updates manufacturer/model/serial for the
 physical station (all contract memberships) in the same transaction as replacement, including
-legacy templates. Only changed, non-empty, non-N/A values are applied. If another intervention
-changed the same field to a different value since the saved snapshot, commit returns 409 and
-preserves both reports and the current station. Unchanged fields never revert newer values.
-Staging, cancellation and failed commit leave the station untouched; verified changes resist stale
-Excel imports. Other closed reports keep their frozen snapshots. Committed corrections return
+legacy templates. The server checks changed, non-empty, non-N/A values against the current station
+identity captured at opening. If the same field has since moved to a different value, commit returns
+409 with reason `station_identity_conflict` and preserves both reports and the current station.
+The current catalogue supplies the baseline for a pre-upgrade working copy only when its last write
+predates opening. In other cases the server uses the historical identity for that copy's conflict
+check. Manual Sync can revalidate a pending station identity conflict. Verified changes resist stale
+Excel imports, and other closed reports keep their frozen snapshots. Only a successful commit
+applies the edited fields. Committed corrections return
 live `station_update` data on commit and GET, so clients recover lost acknowledgements without
 projecting old historical answers into the catalogue. Replaying a committed request does not
 apply its identity edits again. This additive behavior remains compatible with admitted clients;

@@ -321,3 +321,15 @@ do not increment again for its follow-up edits. The user commits and integrates
 the fixes before applying the prepared consolidation patches. Deploy the updated
 server policy before distributing the app; no deployment/publication is authorized
 by preparation. This record describes a prepared candidate, not a published release.
+
+### Prepared version 0.4.1 (2026-11-18)
+
+The user selected **0.4.1** for the closed-report correction batch. App, API and
+latest client use 0.4.1. Android version code increases to **181** and checklist stays
+at **7**. Minimum client remains **0.2.6**, with update notices for compatible older
+apps. Keep client storage during the app update so pending work can be retried.
+
+The server adds a nullable opening identity baseline for closed-report corrections.
+The server update goes first so the desktop app can revalidate cached model,
+manufacturer and serial conflicts through the existing sync command. The source
+report and its evidence stay available until the replacement transaction succeeds.
