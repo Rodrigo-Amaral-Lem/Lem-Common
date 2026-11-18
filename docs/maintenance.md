@@ -303,3 +303,21 @@ Deploy the updated server policy before distributing the new app; preserve local
 The batch record is `ongoing_work/tasks/2026-11-18-parallel-work/`.
 Follow-up edits in this batch must not increment the version again. Preparation
 does not establish a commit, merge, deployment or publication; these remain user actions.
+
+
+### Prepared version 0.4.0 (2026-11-18)
+
+The user selected a new minor consolidation after the committed 0.3.2 baseline.
+This batch combines T1's safe photo-deletion acknowledgement and T2's recoverable
+local checkpoints, including maintained UI failure/retry regressions. App/server
+and latest client become **0.4.0**, with Android version code **180**. The minimum
+compatible client remains **0.2.6**: request/cache/form formats are unchanged,
+stale DELETE uses the existing 409 conflict response, and compatible older apps
+continue to log in with an update notice. Local reports are preserved.
+
+Preparation records are in `ongoing_work/tasks/2026-11-18-t1-t2-0-4-0-preparation/`.
+The separate fix commits and the final version commits belong to this one batch;
+do not increment again for its follow-up edits. The user commits and integrates
+the fixes before applying the prepared consolidation patches. Deploy the updated
+server policy before distributing the app; no deployment/publication is authorized
+by preparation. This record describes a prepared candidate, not a published release.
