@@ -1,8 +1,23 @@
 # Maintenance and common tools
 
-Run workstation commands from the **Common repository root**. Keep generated reports and
-temporary inputs in ignored `build/` subdirectories. Update the focused guides and platform
-manuals rather than adding a new document for each patch.
+Read [root AGENTS.md](../../AGENTS.md) and [Common's local instructions](../AGENTS.md).
+Shared task scope, permissions, validation and staging rules live in the root instructions;
+this guide documents Common's tools and detailed maintenance checks.
+
+Run workstation commands from **ongoing_work**, using explicit paths into the repositories.
+Keep generated reports, temporary inputs, caches and build output under the current
+`ongoing_work/tasks/<task>/` directory. Follow the [working-area workflow](../../ongoing_work/WORKFLOW.md)
+for task setup and temporary-path configuration. Repository-local output is an exception only
+when a tool genuinely requires it, under the root location/ignore rules. Update the existing
+focused guides and platform manuals rather than adding a document for each patch.
+
+For parallel tasks, follow the root [parallel-work rules](../../AGENTS.md#parallel-work-and-integration-user-instruction-2026-11-18)
+and [worktree/reservation workflow](../../ongoing_work/WORKFLOW.md#parallel-work).
+Use the task's sibling Common/App/Server worktrees as effective repository roots,
+including for `sync_shared.py`; preserve the original checkouts and existing build
+paths. The user owns all branch/integration merges and later transfer to the originals.
+Reserve shared resources atomically and keep task-private generated output. A worktree
+copied from a dirty base contains inherited changes, not a committed checkpoint.
 
 ## Common tool catalogue
 
@@ -14,11 +29,18 @@ manuals rather than adding a new document for each patch.
 | [check_readability.py](../tools/check_readability.py) | Python plus Pygments, original ZIP and a matching reconstructed source tree | Historical structural-comparison report for comment/format-only work; nonzero if executable structure differs |
 
 ```powershell
-python tools/sync_shared.py
-python tools/check_docs.py
-python tools/check_docs.py --repo App --repo Common
-python -m unittest discover -s tools/tests -v
+# Working directory: ongoing_work. These checks are read-only.
+.\.venv\Scripts\python.exe -B ..\Common\tools\sync_shared.py
+.\.venv\Scripts\python.exe -B ..\Common\tools\check_docs.py
+.\.venv\Scripts\python.exe -B ..\Common\tools\check_docs.py --repo App --repo Common
 ```
+
+The retained interpreter path is an example; verify it before use. `-B` avoids writing
+Python bytecode into product repositories. When changing the Common tools, their focused
+tests can be run from ongoing_work with
+`.\.venv\Scripts\python.exe -B -m unittest discover -s ..\Common\tools\tests -v`;
+first point TMP/TEMP at task-local scratch as described in the workflow. Do not rerun tool
+tests solely for a prose edit when the applicable documentation checks are sufficient.
 
 `check_docs.py` defaults to App, Server and Common under the workspace containing its repository.
 `--workspace PATH` selects another workspace. It checks relative file links and Markdown heading
@@ -28,14 +50,16 @@ rendering. A missing sibling link fails even if only one repository was selected
 The legacy readability tool expects ZIP entries under one top-level package directory and source
 paths with the old inner `app/`, `server/` structure. Its default `--source` is Common's root,
 which is **not** a reconstructed monorepository. To use it, explicitly assemble/select a matching
-tree under `build/readability-source/` and pass `--source`; do not interpret missing current-split
-paths as an application defect. Functional changes should fail that comparison by design. It is not a
+tree under `ongoing_work/tasks/<task>/scratch/readability-source/` and pass its explicit path
+with `--source`; do not interpret missing current-split paths as an application defect.
+Functional changes should fail that comparison by design. It is not a
 replacement for tests or Git review.
 
 ## Documentation and comments
 
-Mandatory evidence always requires a photograph. Videos are optional attachments and never
-satisfy a required-evidence rule. Apply this user rule to future checklists, validation and manuals.
+Follow the root [maintenance and evidence rules](../../AGENTS.md#local-testing-and-readable-maintenance-user-instructions-2026-11-17),
+including photographs for mandatory report/checklist evidence, Android screenshots for UI
+verification, meaningful comments and regeneration/layout checks for maintained manual PDFs.
 
 Each guide should answer a distinct question, link to the owner of a cross-component rule, and
 describe the current implementation. Keep field labels in Portuguese when quoting the UI, with
@@ -48,40 +72,42 @@ non-obvious limitations. Avoid historical changelog paragraphs inside functions 
 test run proves universal correctness. Command scripts should state their inputs, side effects and
 public/internal status near the entry point.
 
-When changing software, update affected guides and user manuals in the same work, including
-maintained PDF editions when their Markdown changes. Keep source/scripts readable through clear
-names, formatting and comments explaining intent and recovery, rather than restating each line.
-The development workstation has WSL with Ubuntu and virtualization enabled for Linux tests and
-Android emulator simulations; check installed tooling before use and distinguish emulator results
-from physical-device validation.
-
-Before staging documentation:
+For requested documentation edits, use the checks below before staging. Review-only and
+commands-only tasks preserve indexes, as required by the root
+[scope](../../AGENTS.md#task-scope-and-evidence) and
+[staging rules](../../AGENTS.md#staging-and-release-preparation).
 
 1. Verify the described flags/paths in source, including script defaults and outputs.
 2. Run shared-snapshot and local-link checks.
 3. Check Markdown headings, tables, fenced commands and UTF-8 text.
-4. Review source edits for comment/format-only scope; an updated diagnostic documentation path is
-   not a functional algorithm change.
-5. Keep per-run artifacts under ignored `build/` directories, then inspect each repository's staged diff.
-6. Stop at staging when review was requested. Do not commit just because checks passed.
+4. If a task is comment/format-only, verify that source edits stay within that scope; changing a
+   documented diagnostic path is not a functional algorithm change.
+5. Keep per-run artifacts in the current ongoing_work task. Review existing edits and partial
+   staging before adding only the authorized documentation changes; inspect the staged diff.
+6. Implementing changes for user review permits that in-scope staging; a review-only task does
+   not. Passed checks do not authorize commits, tags, pushes, production deployment or publication.
 
 ## Test coordination and formatting
 
 Use the [App test guide](../../App/docs/testing.md) for native/QML/network runners and the
 [Server test guide](../../Server/docs/testing.md) for API/deployment fixtures. A client mock test
 does not establish disk/network correctness; SQLite tests do not establish PostgreSQL locking
-behavior; offscreen desktop tests do not replace Android hardware validation.
+behavior; offscreen desktop tests do not replace the required real Android emulator verification.
+Label emulator and physical-device results separately; a physical device is not a substitute for
+the user-required emulator check. Check available SDK/emulator tooling before use.
 
 The projects retain [pyproject.toml](../pyproject.toml) with Black settings, and App has
 [.clang-format](../../App/.clang-format). For a formatting-only task, use the relevant tool on the
 selected files and compare executable structure. Do not reformat all production source during an
 unrelated documentation edit.
 
-Examples, when those optional developer tools are installed:
+Examples from ongoing_work, only for an authorized formatting task and when the optional tools
+are installed. These commands modify the named product source files; configure any tool caches
+under the current task before running them.
 
 ```powershell
-python -m black tools/sync_shared.py
-clang-format -i ../App/app/src/Checklist.h
+.\.venv\Scripts\python.exe -B -m black --config ..\Common\pyproject.toml ..\Common\tools\sync_shared.py
+clang-format -i ..\App\app\src\Checklist.h
 ```
 
 QML can be formatted with the matching Qt `qmlformat` without import sorting/attribute
@@ -89,22 +115,24 @@ normalization. Formatting tools are development dependencies, not application ru
 
 ## Release and contract changes
 
-Revision `0.2.5` (Android code 176) makes photographs mandatory for applicable MAN.14–18 and
-observations mandatory for N/A. Minimum/latest become `0.2.5`: older offline clients can close
-reports without these checks and cannot safely claim compatibility. Upgrade the app and server
-together. A server-rejected local closure returns to an editable draft with its answers/evidence
-preserved. Already accepted closed reports retain their historical rules. This release also allows
-signing during background sync and adds clockwise photo rotation; no database schema change is needed.
-
-App/CMake declarations, `app/src/main.cpp`, Android version name/code, Server's compatibility
+App/CMake declarations, `App/app/src/main.cpp`, Android version name/code, Server's compatibility
 policy, Compose image tag and installer/environment policy defaults must be considered together.
-`test_release_alignment.py` checks the current client/server declarations when both repositories are
-available. Compatibility admits versions from minimum through latest, including both bounds;
+[test_release_alignment.py](../../Server/server/tests/test_release_alignment.py) checks current
+client/server declarations when both repositories are available. Compatibility admits versions
+from minimum through latest, including both bounds;
 newer-than-latest clients are not assumed compatible.
+
+For an explicitly requested release-preparation batch, review the component diffs together while
+keeping their responsibilities separate. This guide does not start a batch or authorize executing
+prepared commit/deployment commands. Current declarations and batch records determine the target;
+the historical version notes below are not a list of actions to perform now.
 
 ### Version policy
 
-The user's policy, recorded on 2026-11-16, applies to future app and server changes:
+The user's policy, recorded on 2026-11-16, applies to future app and server changes.
+Keep this maintained summary aligned with the root
+[version policy](../../AGENTS.md#users-version-policy-2026-11-16) and follow its
+[staging, signing and preparation boundaries](../../AGENTS.md#staging-and-release-preparation):
 
 - Increment the last version number for an incompatible change, for example `0.2.0` to `0.2.1`.
   Raise the server's minimum client version to the first compatible app. Never ship incompatible
@@ -112,11 +140,14 @@ The user's policy, recorded on 2026-11-16, applies to future app and server chan
 - Reserve the middle number for a deliberately consolidated release, for example `0.2.13` to
   `0.3.0`. Preparing that version does not authorize committing, tagging, pushing or publishing.
 - A request for suggested/prepared Git commits triggers this consolidation: advance the minor
-  number and reset the patch to zero, once per preparation batch. This batch moves `0.2.6` to
-  `0.3.0`; revising its messages or commands does not trigger another increment.
-- Always prepare cryptographically signed commit commands (`git commit -S`) for the user to
-  execute. A `-s` sign-off alone is not a signature. Use a clear subject and detailed body covering
-  the behavior, motivation, validation and compatibility decision; do not fall back to unsigned.
+  number and reset the patch to zero, once per preparation batch (for example `0.2.6` to
+  `0.3.0`). Record the actual baseline and target; revising the same batch's messages, commands
+  or fixes does not repeat the minor consolidation. Genuine new incompatibilities still follow
+  the patch/minimum rule. Ordinary fixes, reviews, resumption and template edits do not themselves
+  request a new preparation batch.
+- When commit preparation is requested, provide cryptographically signed commands (`git commit -S`)
+  for the user to execute. A `-s` sign-off alone is not a signature. Use a clear subject and detailed
+  body covering behavior, motivation, validation and compatibility; do not fall back to unsigned.
 - Incompatible clients receive an explanation and cannot log in; enforce the gate on the server
   for both login and existing sessions. Preserve their local reports while they update.
 - Older compatible clients may log in and receive an update notice. Advance the latest version
@@ -149,6 +180,18 @@ Do not reuse an item ID for another meaning without an explicit versioned mappin
 `Lem-migration-projection` with Python and tests these recovery/size boundaries. Keep its cases
 aligned with every new form version; see the component testing guides for invocation.
 
+A shared template change also needs synchronized snapshots, connector/measurement case review
+and a deliberate choice about existing drafts versus closed history. Editable-report migrations
+use explicit functions in both components; do not assume a future template addition automatically
+migrates all reports.
+
+### Historical release notes
+
+The following entries record past implementation and preparation decisions, including their
+then-current versions and rollout advice. They do not assert today's deployed versions, grant
+current staging/deployment approval or trigger another consolidation. Apply current source,
+batch records and the policies above when planning new work.
+
 Revision `0.2.1` keeps the `0.2.0` API compatible: its minimum remains `0.2.0`, its latest is
 `0.2.1`, and Android version code advances from 171 to 172. Report download isolation and durable
 contract-retention suspension are client fixes; the server already rejects retention writes with
@@ -167,11 +210,6 @@ It adds no wire-format or database incompatibility: minimum client remains `0.2.
 notice. Deploy the updated latest-version policy before using the `0.2.3` app; an older server
 whose admitted upper bound is still `0.2.2` will reject it. Preserve existing local reports.
 
-A shared template change also needs synchronized snapshots, connector/measurement case review and a
-deliberate choice about existing drafts versus closed history. Current editable-v6 corrections are
-explicit functions in both components; do not assume every future template addition automatically
-migrates all reports.
-
 Revision `0.2.4` fixes the PostgreSQL first-presentation write and adds verified save feedback in
 the client. The API shape and stored reports are unchanged: minimum remains `0.2.2`, latest is
 `0.2.4`, Android version code 175. Updating the server repairs the rejected save for compatible
@@ -179,17 +217,22 @@ Windows/Android apps too; the new app adds persistent confirmation and error fee
 desired contract format after deploying because earlier failed transactions stored no choice.
 No reimport, report deletion or ownership change is required.
 
-Review the three Git diffs as a coordinated release, but keep component responsibilities separate.
-The current `0.2.5` work tree adds desktop contract PDF/ZIP batching and the optional administrator
+Revision `0.2.5` (Android code 176) makes photographs mandatory for applicable MAN.14–18 and
+observations mandatory for N/A. Minimum/latest become `0.2.5`: older offline clients can close
+reports without these checks and cannot safely claim compatibility. Upgrade the app and server
+together. A server-rejected local closure returns to an editable draft with its answers/evidence
+preserved. Already accepted closed reports retain their historical rules. This release also allows
+signing during background sync and adds clockwise photo rotation; no database schema change is needed.
+
+The `0.2.5` preparation work adds desktop contract PDF/ZIP batching and the optional administrator
 technician-password endpoint. These additions do not change existing payloads, stored reports or
 login compatibility; the existing `0.2.5` minimum/latest policy is retained. The new password action
 needs the updated API; an older compatible server cannot perform that action. No release/deployment
 is implied by preparing these changes.
 
 The Android photo-editor arrow is drawn geometrically instead of using a font glyph. This UI-only
-fix changes no protocol, stored data or compatibility policy; the current `0.2.5` version is retained.
-Every UI change now requires graphical verification of the changed APK in an actual Android
-emulator, with isolated data and inspected screenshots, as recorded in the workspace AGENTS.md.
+fix changes no protocol, stored data or compatibility policy; that batch retained `0.2.5`.
+Current UI verification requirements are in the root maintenance/evidence rules linked above.
 
 Deployment transport ZIPs are temporary payloads, not the source-of-truth workflow. No Git remote,
 APK, portable EXE, production deployment or production restore follows automatically from a
@@ -197,8 +240,8 @@ documentation update.
 
 ### Checklist v7 / version 0.2.6 (2026-11-17)
 
-App/server version and minimum/latest client are **0.2.6**, Android code **177**. Earlier apps cannot
-safely interpret MAN.21/MAN.22, current units or calculated assessments. Login and authenticated
+This batch recorded app/server version and minimum/latest client as **0.2.6**, Android code **177**.
+Earlier apps cannot safely interpret MAN.21/MAN.22, current units or calculated assessments. Login and authenticated
 requests reject incompatible versions. Stale deployment environment values cannot lower the compiled
 compatibility floor; latest is raised to that floor when necessary. This is an incompatible patch,
 not a release publication. No database schema change is needed.
@@ -208,6 +251,12 @@ frozen; old offline closed v6 reports can finish staged upload without reinterpr
 See report-contract.md for unit confirmation, retired-answer/evidence preservation and the temporary
 50 V criterion with the 25 V exception. Suggested observations must keep explicit provenance and
 clear only untouched generated text on state change/user focus; apply this to future suggestions.
+When focus clears generated text, retain the open editor and its focus, including optional OK
+observations such as MAN.18. Emptying the suggestion must not remove the observation field or
+require a second tap to write. The explicit observation-removal control remains available.
+This shared behavior applies to every question with auto-filled notes: N/A defaults, calculated
+suggestions and future form additions. Cover the full template's defaults plus calculated OK/NOK
+cases in UI regressions; do not implement or test it only for MAN.18.
 
 The subsequent regression fixes retain `0.2.6` / Android 177 / minimum `0.2.6`: correction lock
 ordering, cloned historical-signature references and photo uploads against a projected migrated
@@ -234,9 +283,23 @@ payload format or database schema. Update both components to obtain all of these
 
 ### Consolidated version 0.3.0 (2026-11-17)
 
-The user's commit-preparation request consolidates the preceding work as app/API **0.3.0**,
-Android code **178**, checklist **7**. Minimum compatible client remains **0.2.6**; latest becomes
+The user's commit-preparation request consolidated the preceding work as app/API **0.3.0**,
+Android code **178**, checklist **7**. Minimum compatible client remained **0.2.6**; latest became
 **0.3.0**. A compatible 0.2.6 app may log in and receives an update notice. Earlier incompatible
 apps remain blocked. This numbering change introduces no additional protocol or schema change.
-Update server deployment policy before installing the new client, preserve local reports during
-upgrades, and use the prepared signed commit commands. No commit, tag or publication is automatic.
+The recorded rollout order was to update server deployment policy before installing the new
+client, preserving local reports during upgrades. Prepared signed commands were for user execution;
+the preparation record does not establish that a commit, deployment or publication occurred.
+
+### Prepared version 0.3.2 (2026-11-18)
+
+The user explicitly selected **0.3.2** for this preparation batch, overriding the
+usual next-minor consolidation. Android code is **179**; checklist remains **7**.
+The observation editor stays open and focused when generated text is cleared.
+This is compatible UI behavior: there is no API, payload, schema or persistence
+change. Minimum compatible client stays **0.2.6**; latest becomes **0.3.2**.
+Clients 0.2.6 through 0.3.1 remain supported and receive an update notice.
+Deploy the updated server policy before distributing the new app; preserve local reports.
+The batch record is `ongoing_work/tasks/2026-11-18-parallel-work/`.
+Follow-up edits in this batch must not increment the version again. Preparation
+does not establish a commit, merge, deployment or publication; these remain user actions.
