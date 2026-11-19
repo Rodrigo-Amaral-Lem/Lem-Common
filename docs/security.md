@@ -9,7 +9,9 @@ separate from the maintained reading path.
 
 The server stores salted scrypt password representations and SHA-256 session-token digests, not
 recoverable plaintext passwords/raw session tokens. The API requires passwords of at least 12
-characters; sessions expire after 30 days and explicit logout/password-reset paths revoke them.
+characters. New sessions expire 365 days after login, measured and enforced by the server.
+Logout, password reset and the local server administration command can revoke sessions
+before expiry. The console supports one account or all accounts, including administrators.
 
 The app's `PUT /api/users/{user_id}/password` action is administrator-only and accepts only current
 `tech` targets (12–200 characters). The server filters the target role before obtaining a credential
@@ -17,7 +19,9 @@ write lock, rechecks against concurrent role changes, and atomically updates the
 deletes all target sessions and audits actor/target without credentials. Login/authentication share
 the same User-row lock, so a racing old login cannot retain a usable session after reset. Administrator
 password recovery remains a server-console operation. Reports and assignments are not modified.
-Client bearer tokens are kept in memory; offline identity/cache data remain on disk.
+Clients save the bearer token using operating-system credential protection and validate it
+against the configured server on reopening. Local identity and report caches allow offline
+work while validation is pending or after a server rejection.
 
 Login uses separate pair/IP/account buckets over a 60-second window: 5 per pair, 30 per IP, 20 per
 account. IPv6 addresses are grouped by /64 (IPv4-mapped addresses normalize to IPv4). Active buckets
