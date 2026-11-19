@@ -6,18 +6,19 @@ superseded behavior of older version notes.
 
 ## Public report identifiers and export names
 
-Closed reports display `ChargerID_YYYY-MM-DD_HH-mm-ss_Contract`, using the frozen charger ID and
-contract name plus the completion instant in `Europe/Lisbon` (including daylight saving time).
-Spaces and filename-forbidden characters become hyphens; Unicode accents are preserved. Charger
-and contract components are capped at 72 and 112 UTF-8 bytes so names fit common filesystems.
-The PDF and ZIP filenames, and the PDF inside the ZIP, use this identifier. `report.json` retains
-its technical archive name and carries the public `identifier` alongside the internal UUID `id`.
+Drafts and closed reports display `ID_Contrato`, using the charger ID and contract name from
+the report snapshot. Spaces and filename-forbidden characters become hyphens, and Unicode accents
+are preserved. Charger and contract components are capped at 72 and 112 UTF-8 bytes.
 
-Drafts display `ChargerID_Rascunho_Contract`; legacy closed records without a valid completion
-instant use `sem-data_sem-hora`. Exporting again does not change the timestamp. Internal UUIDs,
-API paths, synchronization, ownership and evidence links remain stable within an intervention;
-administrator correction explicitly replaces it with a new UUID as described below. App/Server share
-[naming cases](../shared/report-naming-cases.json) to keep online and offline outputs consistent.
+The PDF and ZIP filenames use this identifier. Inside the ZIP, the PDF and JSON share the
+same base name. Original photographs and videos are grouped by checkpoint and named
+`ID_Contrato_EvidenceID.ext`. Their UUID suffix distinguishes multiple originals. Dates
+appear separately in the catalogue and report contents. Batch exports use separate subfolders
+when reports share a filename.
+
+Internal UUIDs address reports and evidence for API calls, ownership and synchronization.
+Administrator correction explicitly replaces a report with a new UUID as described below.
+App and Server share [naming cases](../shared/report-naming-cases.json) for online and offline outputs.
 
 ## Groups and answer shapes
 
@@ -145,7 +146,9 @@ New reports use template v7. Editable v6 reports, including correction copies of
 upgrade atomically: MAN.21 general notes/evidence move to MAN.22; EST.10's full answer is archived
 under `payload.retired_answers`, its notes/evidence move to EST.18. New MAN.21 needs after-maintenance
 photographs (or an N/A observation). EST.01 includes before-cleaning views, EST.13 only tariff and
-EST.16 only DGEG stickers. EST.15 N/A suggests `Sem POS`.
+EST.16 only DGEG stickers. EST.15 uses TPM for the payment terminal and suggests `Sem TPM` for N/A.
+App and PDF rendering show the current term for older question labels and untouched generated notes.
+Historical templates and user-authored observations retain their original text in storage.
 
 Explicit legacy A/mA values convert to integer mA only when unambiguous. Otherwise `previous_value`
 retains the original while the current reading becomes empty for confirmation. Both pending and
@@ -199,7 +202,7 @@ independent assessment. Evidence limits and security boundaries are in [Security
 
 The app also exports a closed report locally when every original is available, without requiring
 network access or prior synchronization. Local ZIPs use the same PDF name and media folder structure,
-preserve original bytes, and include `sync_pending` in `report.json` to identify unacknowledged local
+preserve original bytes, and include `sync_pending` in the report JSON to identify unacknowledged local
 work. Public report/evidence fields are exported; private paths, upload flags and conflict/in-flight
 state are excluded. Exporting does not change the report's owner, status, revision or sync state.
 
@@ -211,8 +214,8 @@ suggestion only on transition into N/A with empty notes. Existing notes are pres
 a suggestion remains possible and leaves the item pending. The server validates the submitted
 observation without generating an unconfirmed explanation.
 
-When leaving N/A (OK, NOK or clearing), the client removes notes only when they exactly match
-that item's `na_notes_default`; custom notes remain. Generated CARG.01 connector items inherit
+When leaving N/A (OK, NOK or clearing), the client removes a note only when its stored suggestion
+marker identifies it as untouched. Generated CARG.01 connector items inherit
 “Veículo usado não compatível”. MAN.11/12 use “intensidade”; MAN.18 displays NA in its value field
 when N/A is selected, retaining the existing not-applicable storage representation.
 
@@ -230,8 +233,7 @@ The server clones its answers, frozen context and original evidence under new UU
 signature references. The editor owns the working draft; the completed replacement retains the
 original technician's ownership. Existing evidence does not need a download/upload round trip.
 Start and finish accept timezone-aware instants, with finish at or after start. Every correction
-has a new internal UUID. Changing only the start preserves the public filename; changing finish
-updates its Lisbon date/time components.
+has a new internal UUID. Both dates appear in the exported report, whose filename uses `ID_Contrato`.
 
 Ordinary PUT cannot close a correction. The commit operation validates the complete copy and
 compares both revisions before replacing the source in one transaction. Invalid/incomplete data,
