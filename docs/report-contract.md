@@ -370,3 +370,15 @@ is cleared on state change or user focus in the notes editor. Custom/modified te
 if a user later types the same words as the suggestion. `auto_assessment` identifies calculated
 states for invalid-reference cleanup. Client input offers suggestions; server validation does not
 reinsert a dismissed suggestion. A calculated NOK still requires a nonempty observation at closure.
+
+## Contract instructions for a PCVE
+
+For preventive maintenance, the Excel column **Notas** belongs to the membership identified by
+`contract_id` and `charger_id`. The same physical PCVE can have different instructions in each
+contract. Future importers, cache changes and administration screens must keep the text and its
+revision on that membership. The shared station catalogue, its raw Excel metadata and the report's
+answers, frozen snapshot and exports have separate lifecycles.
+
+An import with the column updates the notes for the included IDs. A blank cell clears them.
+An older sheet without the column preserves any existing instructions. The technician consults the
+current contract instructions when opening a report, including a closed one.

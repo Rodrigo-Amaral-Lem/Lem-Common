@@ -56,12 +56,12 @@ Do not copy a component snapshot over Common without reviewing why it differs.
 
 ## Version and branding ownership
 
-The current application/API version is `0.3.0`, Android version code is 178 and checklist version
+The current application/API version is `0.5.1`, Android version code is 183 and checklist version
 is 7. Documentation edits do not change these application versions. Coordinate a future release's
 declarations and validation across the components; see [Maintenance](maintenance.md#version-policy).
 The minimum compatible client is `0.2.6`; earlier apps cannot interpret the revised checklist safely
 and are rejected at login and on authenticated requests.
-Compatible `0.2.6` clients can still log in and receive an update notice for `0.3.0`.
+Compatible clients from `0.2.6` through `0.5.0` receive an update notice for `0.5.1`.
 
 Brand assets must be deliberately incorporated into the responsible repository with their usage
 and provenance recorded. Adding an image to a developer's local folders does not include it in
