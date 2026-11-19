@@ -333,3 +333,14 @@ The server adds a nullable opening identity baseline for closed-report correctio
 The server update goes first so the desktop app can revalidate cached model,
 manufacturer and serial conflicts through the existing sync command. The source
 report and its evidence stay available until the replacement transaction succeeds.
+
+### Prepared version 0.5.0 (2026-11-19)
+
+This release consolidates the PCVE catalogue, contract membership management, persistent
+sessions and report-handling fixes after 0.4.1. App, API and latest client advance to **0.5.0**.
+Android version code advances to **182**. Checklist **7** and minimum client **0.2.6** stay
+current. The server accepts the earlier report format, and older compatible clients receive
+an update notice. Existing sessions retain their original expiry. Deploy the server first
+and update the app in place to preserve pending reports and evidence.
+
+The release record is in `ongoing_work/tasks/2026-11-19-prepare-0-5-0/`.
