@@ -13,6 +13,12 @@ characters. New sessions expire 365 days after login, measured and enforced by t
 Logout, password reset and the local server administration command can revoke sessions
 before expiry. The console supports one account or all accounts, including administrators.
 
+Technicians and administrators can change their own password with `PUT /api/account/password`.
+The server locks the authenticated account, checks the current password and requires two matching
+copies of the new password (12–200 characters). A successful transaction stores the salted hash,
+revokes the account's other sessions and audits `user.password.change`. The calling token keeps
+its existing expiry. Current-password checks have their own rate limiter with the login limits.
+
 The app's `PUT /api/users/{user_id}/password` action is administrator-only and accepts only current
 `tech` targets (12–200 characters). The server filters the target role before obtaining a credential
 write lock, rechecks against concurrent role changes, and atomically updates the salted hash,
