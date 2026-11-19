@@ -344,3 +344,13 @@ an update notice. Existing sessions retain their original expiry. Deploy the ser
 and update the app in place to preserve pending reports and evidence.
 
 The release record is in `ongoing_work/tasks/2026-11-19-prepare-0-5-0/`.
+
+### Contract membership notes in 0.5.1
+
+The optional **Notas** column belongs to the PCVE's membership in each preventive maintenance
+contract. Use the membership UUID for import, caching and editing. Keep this field out of the
+shared station details, including raw spreadsheet columns. See [report contract](report-contract.md#contract-instructions-for-a-pcve).
+
+App/API and latest client are **0.5.1**, Android code **183**. Minimum client stays **0.2.6**.
+The API additions and the new membership notes table preserve earlier import and report formats.
+Compatible earlier clients receive an update notice. Use the updated app to display contract notes.
