@@ -382,3 +382,9 @@ answers, frozen snapshot and exports have separate lifecycles.
 An import with the column updates the notes for the included IDs. A blank cell clears them.
 An older sheet without the column preserves any existing instructions. The technician consults the
 current contract instructions when opening a report, including a closed one.
+
+## Visit, acknowledgement and payload size
+
+A new scoped report carries its originating work item UUID. The binding survives resolution and replanning. A successful report write acknowledges the revision, payload and attachment manifest accepted in that transaction. On closure the definitive list can include photographs from another installation. The ordinary finish instant must be at or after the stored start in UTC. Corrections use their editable start and finish.
+
+Apply the shared compact UTF-8 JSON budget to the full payload and the character limits to individual answers. A size or validation rejection leaves the local report editable under the same UUID.

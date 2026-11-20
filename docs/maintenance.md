@@ -358,3 +358,7 @@ Compatible earlier clients receive an update notice. Use the updated app to disp
 ### Ordens de trabalho em 0.5.2 e 0.5.3
 
 App/API 0.5.3, Android 185, checklist 7, minimum 0.2.6. Earlier clients retain whole-contract access and receive an update notice. The new client opts into membership-scoped catalogues. Additive work-order tables keep planning, results and notifications separate from report payloads. Install the updated server before the client and preserve offline reports. Version 0.5.3 adds cancellation and draft-recovery tables. Existing clients omit cancelled orders by default. An installed 0.5.2 client can update in place.
+
+### Visit-scoped synchronization in 0.5.4
+
+App/API, latest client and minimum client are 0.5.4. Android code is 186 and checklist version stays 7. Earlier clients cannot identify the originating visit on their first offline upload. Upgrade the server and clients together and retain each device's local profile. Shared report limits live in `shared/report-limits.json`. Synchronize both component snapshots when changing a limit.
