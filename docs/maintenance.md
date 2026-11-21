@@ -362,3 +362,20 @@ App/API 0.5.3, Android 185, checklist 7, minimum 0.2.6. Earlier clients retain w
 ### Visit-scoped synchronization in 0.5.4
 
 App/API, latest client and minimum client are 0.5.4. Android code is 186 and checklist version stays 7. Earlier clients cannot identify the originating visit on their first offline upload. Upgrade the server and clients together and retain each device's local profile. Shared report limits live in `shared/report-limits.json`. Synchronize both component snapshots when changing a limit.
+
+### Corrective and commissioning reports in 0.5.5
+
+App/API and both compatibility declarations advance to 0.5.5, with Android code 187.
+Earlier clients treat every work-order target and report scope as preventive and cannot
+display or export these new report types correctly. Install the server and update the apps
+in place. The three report types currently share checklist 7. A future change to their
+questions must select by the frozen intervention kind and follow the form-evolution checks.
+
+### Consolidation of corrective and commissioning reports in 0.6.0
+
+App, API and the latest client version advance to 0.6.0, with Android code 188.
+The first client to support mixed work orders and typed reports is 0.5.5 (187).
+It remains compatible and receives an update notice. Clients through 0.5.4 receive
+an upgrade explanation at login and on authenticated requests. Checklist 7 and the
+0.5.5 data format carry over. Update the server and its version configuration before
+installing the new app over the existing profile.

@@ -6,7 +6,7 @@ superseded behavior of older version notes.
 
 ## Public report identifiers and export names
 
-Drafts and closed reports display `ID_Contrato`, using the charger ID and contract name from
+Preventive drafts and closed reports display `ID_Contrato`, using the charger ID and contract name from
 the report snapshot. Spaces and filename-forbidden characters become hyphens, and Unicode accents
 are preserved. Charger and contract components are capped at 72 and 112 UTF-8 bytes.
 
@@ -380,11 +380,23 @@ revision on that membership. The shared station catalogue, its raw Excel metadat
 answers, frozen snapshot and exports have separate lifecycles.
 
 An import with the column updates the notes for the included IDs. A blank cell clears them.
-An older sheet without the column preserves any existing instructions. The technician consults the
-current contract instructions when opening a report, including a closed one.
+An older sheet without the column preserves any existing instructions. When either a technician or
+an administrator creates a draft, instructions for its membership or intervention open automatically
+if they contain text. With empty instructions the form opens directly. Technicians also see the
+current instructions when reopening a report, including a closed one.
 
 ## Visit, acknowledgement and payload size
 
 A new scoped report carries its originating work item UUID. The binding survives resolution and replanning. A successful report write acknowledges the revision, payload and attachment manifest accepted in that transaction. On closure the definitive list can include photographs from another installation. The ordinary finish instant must be at or after the stored start in UTC. Corrections use their editable start and finish.
 
 Apply the shared compact UTF-8 JSON budget to the full payload and the character limits to individual answers. A size or validation rejection leaves the local report editable under the same UUID.
+
+## Corrective and commissioning report context
+
+Preventive reports retain their existing frozen charger and contract. Other reports add
+`snapshot.intervention` containing the job UUID, kind and public reference. The immutable
+`snapshot.contract` contains the applicable corrective coverage or null. Its validity is
+checked on the day the job is created in Lisbon. Later expiry preserves the job history.
+One corrective or commissioning job has one ordinary report, with the usual separate
+administrator correction copy. The public filename uses the PCVE ID and job reference.
+Both report kinds currently use the preventive checklist, evidence and signature rules.
