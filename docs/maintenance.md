@@ -379,3 +379,18 @@ It remains compatible and receives an update notice. Clients through 0.5.4 recei
 an upgrade explanation at login and on authenticated requests. Checklist 7 and the
 0.5.5 data format carry over. Update the server and its version configuration before
 installing the new app over the existing profile.
+
+### Commissioning work orders in 0.6.1
+
+App, API and both compatibility bounds advance to 0.6.1, with Android code 189. Clients through
+0.6.0 label a commissioning work-order item as preventive. The server requires the update on
+login and authenticated requests. The existing visit linkage, report storage and checklist 7
+carry over. Coordinate the server and client updates and preserve each installed profile.
+
+### Consolidation of commissioning work orders in 0.7.0
+
+App, API and the latest client version advance to 0.7.0, with Android code 190. The minimum
+client stays at 0.6.1, the first version to display commissioning work orders correctly.
+The 0.6.1 client receives an update notice. Clients through 0.6.0 receive the required update
+explanation at login and on authenticated requests. Install the updated API and client policy
+before distributing the app and retain existing profiles when installing it.

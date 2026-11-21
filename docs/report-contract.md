@@ -400,3 +400,5 @@ checked on the day the job is created in Lisbon. Later expiry preserves the job 
 One corrective or commissioning job has one ordinary report, with the usual separate
 administrator correction copy. The public filename uses the PCVE ID and job reference.
 Both report kinds currently use the preventive checklist, evidence and signature rules.
+Both can be included in a work order with preventive visits for the same PCVE. The normal visit
+binding uses the work item UUID and the commissioning visit keeps its empty commercial coverage.
