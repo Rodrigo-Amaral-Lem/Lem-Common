@@ -394,3 +394,14 @@ client stays at 0.6.1, the first version to display commissioning work orders co
 The 0.6.1 client receives an update notice. Clients through 0.6.0 receive the required update
 explanation at login and on authenticated requests. Install the updated API and client policy
 before distributing the app and retain existing profiles when installing it.
+
+### Consolidation of field workflow fixes in 0.8.0
+
+App, API and the latest client version advance to 0.8.0, with Android code 191.
+Earlier clients at or above 0.6.1 remain compatible and receive an update notice. The server
+enforces the same minimum at login and on authenticated requests. The new
+individual draft handoff requires the updated client and server. The planning
+refusal preserves the existing HTTP status and Portuguese detail for older
+clients. Visit recovery retains the original draft, notes and evidence.
+Checklist 7 and the existing local profile carry over. Update the server and
+its version settings before distributing the updated app.

@@ -56,10 +56,10 @@ Do not copy a component snapshot over Common without reviewing why it differs.
 
 ## Version and branding ownership
 
-The current application/API version is `0.7.0`, Android version code is 190 and checklist version
+The current application/API version is `0.8.0`, Android version code is 191 and checklist version
 is 7. Documentation edits do not change these application versions. Coordinate a future release's
 declarations and validation across the components; see [Maintenance](maintenance.md#version-policy).
-The minimum client is `0.6.1`, which can sign in and receives an update notice for `0.7.0`.
+The minimum client is `0.6.1`, which can sign in and receives an update notice for `0.8.0`.
 Earlier apps display commissioning work-order items as preventive. The server explains the
 required update at login and on authenticated requests.
 
