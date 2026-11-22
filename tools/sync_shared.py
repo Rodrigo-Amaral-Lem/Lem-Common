@@ -1,15 +1,17 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # Part of LEM. See the accompanying LICENSE for license terms and warranty disclaimer.
 
-# Workspace tool: default read-only comparison; --write publishes canonical Common/shared snapshots.
-# Requires sibling App and Server roots. Never deletes unexpected files; nonzero means review is needed.
-# Writes are not transactional across repositories: inspect all diffs after an interrupted/failed --write.
-# See docs/workspace.md for the coordinated review workflow.
+# Compare each sibling snapshot with Common/shared. With --write, files are
+# copied as differences are found. An interruption can leave earlier copies in
+# place. See docs/workspace.md for the review procedure.
 
+import argparse
 from pathlib import Path
-import argparse, hashlib, shutil, sys
+import shutil
+import sys
 
-common = Path(__file__).resolve().parents[1]
+common_root = Path(__file__).resolve().parents[1]
+source_root = common_root / "shared"
 parser = argparse.ArgumentParser(
     description="Check or publish Common/shared snapshots to App and Server."
 )
@@ -20,26 +22,33 @@ parser.add_argument(
 )
 args = parser.parse_args()
 changes = []
-for repo in ("App", "Server"):
-    target = common.parent / repo / "shared"
-    if not target.parent.is_dir():
-        raise SystemExit(f"Missing sibling repository: {target.parent}")
-    source = common / "shared"
-    for p in sorted(source.rglob("*")):
-        if not p.is_file():
+
+for repo_name in ("App", "Server"):
+    snapshot_root = common_root.parent / repo_name / "shared"
+    if not snapshot_root.parent.is_dir():
+        raise SystemExit(f"Missing sibling repository: {snapshot_root.parent}")
+
+    for source_file in sorted(source_root.rglob("*")):
+        if not source_file.is_file():
             continue
-        rel = p.relative_to(source)
-        dst = target / rel
-        if not dst.exists() or p.read_bytes() != dst.read_bytes():
-            changes.append(f"{repo}/shared/{rel.as_posix()}")
-            if args.write:
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(p, dst)
-    for p in sorted(target.rglob("*")):
-        if p.is_file() and not (source / p.relative_to(target)).exists():
+        relative_path = source_file.relative_to(source_root)
+        snapshot_file = snapshot_root / relative_path
+        if snapshot_file.exists() and source_file.read_bytes() == snapshot_file.read_bytes():
+            continue
+        changes.append(f"{repo_name}/shared/{relative_path.as_posix()}")
+        if args.write:
+            snapshot_file.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source_file, snapshot_file)
+
+    for snapshot_file in sorted(snapshot_root.rglob("*")):
+        if not snapshot_file.is_file():
+            continue
+        relative_path = snapshot_file.relative_to(snapshot_root)
+        if not (source_root / relative_path).exists():
             raise SystemExit(
-                f"Extra shared file requires manual review (never deleted automatically): {p}"
+                f"Extra shared file requires manual review (never deleted automatically): {snapshot_file}"
             )
+
 print(("Updated" if args.write else "Differences") + f": {len(changes)}")
 for change in changes:
     print(change)

@@ -19,6 +19,8 @@ when reports share a filename.
 Internal UUIDs address reports and evidence for API calls, ownership and synchronization.
 Administrator correction explicitly replaces a report with a new UUID as described below.
 App and Server share [naming cases](../shared/report-naming-cases.json) for online and offline outputs.
+The filename builders reserve space for the full evidence ID and extension, then shorten the report
+identifier to fit the remaining UTF-8 bytes. [Client filename builder](../../App/app/src/ReportNaming.h) · [Server filename builder](../../Server/server/app/report_naming.py)
 
 ## Groups and answer shapes
 
@@ -100,9 +102,19 @@ remove an assessment.
 
 ## Numeric formatting and limits
 
-The shared [measurement cases](../shared/measurement-cases.json) exercise the Python, C++ and
-JavaScript implementations. Current MAN keys map to legacy PC02 keys internally for compatibility;
-keep those mappings stable.
+For partial input while the technician types, see the [field editor](../../App/app/qml/Measurements.js).
+For the representation of a saved reading in an export, see the [PDF formatter](../shared/report/measurements.js).
+
+| Follow a stored reading | Client source | Server source |
+| --- | --- | --- |
+| Parse the number and unit, format the value and check voltage limits | [Measurements.h](../../App/app/src/Measurements.h) | [measurements.py](../../Server/server/app/measurements.py) |
+| Calculate MAN.12 and MAN.18 assessments and track suggested observations | [MaintenanceRules.h](../../App/app/src/MaintenanceRules.h) | [maintenance_rules.py](../../Server/server/app/maintenance_rules.py) |
+| Upgrade an editable v6 report, including legacy current readings, notes and photo checkpoints | [MaintenanceMigration.h](../../App/app/src/MaintenanceMigration.h) | [maintenance_migration.py](../../Server/server/app/maintenance_migration.py) |
+
+Current MAN keys reuse legacy PC02 rules where their meanings coincide. Keep these mappings stable
+for saved reports. MAN.11 and MAN.12 have their own mA grammar. The shared fixtures cover
+[measurement formats](../shared/measurement-cases.json)
+and [calculated assessment boundaries](../shared/maintenance-cases.json).
 
 | Measurements | Numeric grammar / classification |
 | --- | --- |
