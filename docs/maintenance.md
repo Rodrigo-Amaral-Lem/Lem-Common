@@ -414,3 +414,15 @@ provide that precondition and receive the required update explanation. Coordinat
 in-place client updates to preserve the device profile. Checklist 7 and existing shared snapshots
 carry over. An original report UUID deleted by the server stays tombstoned while the device
 retains its owner's unsent work in a separate local recovery copy.
+
+### Field shift fixes in 0.10.0
+
+App and API advance from 0.9.2 to 0.10.0, with Android version code 195. The server
+keeps 0.9.1 as its minimum and admits 0.9.1 and 0.9.2 with an update notice. Deploy
+the API and configure its latest client as 0.10.0 before distributing the new app.
+
+Station history now uses the report-level visit grant alongside direct contract
+assignments. A detached PCVE still returns HTTP 409 with the existing detail for
+older clients. The added reason lets 0.10.0 retry the original draft after
+reattachment. Closed reports, checklist 7, shared snapshots and existing device
+profiles carry over. No database schema or checklist migration is required.
