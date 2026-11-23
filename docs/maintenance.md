@@ -405,3 +405,12 @@ refusal preserves the existing HTTP status and Portuguese detail for older
 clients. Visit recovery retains the original draft, notes and evidence.
 Checklist 7 and the existing local profile carry over. Update the server and
 its version settings before distributing the updated app.
+
+### Report and visit retention in 0.9.1
+
+App, API and both client compatibility bounds advance to 0.9.1, with Android version code 193.
+Draft deletion checks a digest of the evidence shown to the authorizing client. Older clients cannot
+provide that precondition and receive the required update explanation. Coordinate API and
+in-place client updates to preserve the device profile. Checklist 7 and existing shared snapshots
+carry over. An original report UUID deleted by the server stays tombstoned while the device
+retains its owner's unsent work in a separate local recovery copy.
