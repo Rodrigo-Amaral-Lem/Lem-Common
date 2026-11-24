@@ -426,3 +426,12 @@ assignments. A detached PCVE still returns HTTP 409 with the existing detail for
 older clients. The added reason lets 0.10.0 retry the original draft after
 reattachment. Closed reports, checklist 7, shared snapshots and existing device
 profiles carry over. No database schema or checklist migration is required.
+
+### Report and work-order navigation in 0.11.0
+
+App and API advance from 0.10.0 to 0.11.0. Android version code 196 supports an
+in-place update. The reorganized controls use the existing work-order, report and
+evidence contracts. Checklist 7 and the database formats carry forward.
+The minimum client is 0.9.1. Clients from 0.9.1 through 0.10.0 receive an update
+notice. Update the API and set `LEM_LATEST_CLIENT_VERSION=0.11.0` before
+distributing the new client.
