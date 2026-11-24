@@ -92,7 +92,7 @@ to make an old report pass. PDF/ZIP must retain the entire observation across pa
 - **MAN.12:** configured trip time in integer milliseconds or NA. A photograph is optional.
 - **MAN.13:** requires an entered current-trip result or N/A, with a photograph when applicable. N/A requires an observation but exempts the photograph.
   OK/NOK is an independent evaluation and cannot fill the value.
-- **MAN.14:** measured trip time in integer milliseconds or NA, with a technician-selected OK/NOK/N/A. OK and NOK require a photograph. NOK and N/A require an observation. A test marked NOK may have an unavailable reading. N/A exempts the photograph.
+- **MAN.14:** measured trip time in integer milliseconds or NA, with a technician-selected OK/NOK/N/A. An unavailable reading can coexist with OK or NOK. OK and NOK require a photograph. NOK and a test assessment of N/A require an observation. An N/A assessment makes the photograph optional.
 
 - **MAN.16–MAN.19:** require a manually entered insulation result or N/A. Instrument text such as
   `>500 MΩ` or `OL` remains possible; do not impose the voltage grammar on these fields.
@@ -178,6 +178,10 @@ Already-closed offline v6 and v7 reports use `frozen_history: true` during stage
 upload. The server marks `template.frozen_upload` until closure; this staging record cannot be edited
 or converted by another device. The immutable v6 template is retained in `shared/checklist-v6.json`.
 The v7 snapshot is retained in [checklist-v7.json](../shared/checklist-v7.json). New editable reports use v8.
+Lost PUT, photo DELETE and photo replacement acknowledgements compare equivalent payloads and verify
+the expected revision. Evidence acknowledgements additionally check the removed photo ID and, on
+replacement, the new ID and digest. A locally closed older correction reopens for current-form review
+if the server still has an uncommitted matching draft. The original closed report remains available.
 
 Corrections of pre-v6 closed reports also adopt the current form. Since older IDs could mean
 different questions, previous values and notes become separate optional `ANT` notes fields,

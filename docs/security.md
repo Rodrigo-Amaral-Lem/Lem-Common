@@ -59,15 +59,15 @@ Binary-size limits below use MiB/KiB unless explicitly marked as the proxy's con
 | Video file | 60 MiB |
 | Server image inspection | JPEG/PNG, maximum 40 million pixels |
 | Video | MP4/3GP, one supported video stream, maximum 4K-area frame; 120.5-second inspection ceiling allows timestamp rounding around 120-second capture |
-| Video probe | `ffprobe`, file/pipe protocols only, 10-second subprocess timeout |
+| Video validation | Complete MP4/3GP container boxes and readable packets using `ffprobe`, file/pipe protocols only, 10-second subprocess timeout |
 | Report evidence | Up to 200 items and 400 MiB total |
 | Client evidence download reply | 60 MiB; photograph validation remains capped at 20 MiB |
 | Client PDF/ZIP reply | 500 MiB |
 | Other client replies | 64 MiB |
 | Answer value/notes | Up to 8,000 characters each at the API boundary |
 | Export admission | Default 2 slots, configured maximum 4 |
-| Image/media admission | Default 1 slot, configured maximum 2 |
-| Original-evidence download admission | Default 8 simultaneous responses per API worker, configured maximum 16 |
+| Image/media admission | Default 1 slot, configured maximum 2, acquired before multipart body consumption |
+| Original-evidence download admission | Default 8 simultaneous responses per API worker, configured maximum 16, 30-second stalled-send timeout |
 
 Evidence downloads release the database connection before sending and retain a separate response
 slot to bound memory. Single-byte-range requests enforce the same contract/report access as full

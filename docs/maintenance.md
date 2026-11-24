@@ -440,4 +440,10 @@ distributing the new client.
 
 App/API, minimum client and latest client are 0.11.1, with Android code 197. Earlier apps interpret the v8 MAN identifiers and units differently. Update the API and both compatibility settings together, then install the app over the existing profile to preserve local drafts and evidence.
 
+In 0.11.2, the form stays at v8 and Android advances to code 198. Both compatibility values
+advance to 0.11.2 because a restored membership requires the current revision on a subsequent
+removal. Verify a delayed DELETE from before recovery, then confirm a new removal with the
+refreshed revision. Test lost draft and photo acknowledgements and a pending historical correction
+from an unchanged local profile.
+
 Use the [report contract](report-contract.md#template-history-and-station-identity) to map v7 answers and evidence to v8. Exercise correction and PDF/ZIP export for preventive, corrective and commissioning reports. Test the last recoverable instant and the exact UTC deadline for the 48-hour request and 14-day membership periods. Include recovery by preventive Excel reimport and independent request/coverage deadlines.
