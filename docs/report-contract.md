@@ -1,7 +1,7 @@
 # Current report contract
 
 The canonical starting template is [shared/checklist-v1.json](../shared/checklist-v1.json), version
-**7**. App and Server keep tracked copies. This guide describes the present source rather than the
+**8**. App and Server keep tracked copies. This guide describes the present source rather than the
 superseded behavior of older version notes.
 
 ## Public report identifiers and export names
@@ -30,7 +30,7 @@ identifier to fit the remaining UTF-8 bytes. [Client filename builder](../../App
 | 2 | SITE | SITE.01–SITE.06 |
 | 3 | QVE | QVE.01–QVE.14 |
 | 4 | EST — Estado Geral | EST.01–EST.09, EST.11–EST.18 |
-| 5 | MAN | MAN.01–MAN.22 |
+| 5 | MAN | MAN.01–MAN.24 |
 | 6 | CARG | One CARG.01.xx per connector, plus CARG.04–CARG.07 |
 | 7 | FIN | FIN.01–FIN.03 |
 
@@ -67,6 +67,8 @@ to make an old report pass. PDF/ZIP must retain the entire observation across pa
 | `na_notes_required` | N/A needs an explanation |
 | `notes_disabled`, `media_disabled` | Hide observation/attachment controls; existing historical data is not silently deleted |
 | `na_notes_default` | Editable suggestion when entering N/A with empty notes; unchanged suggestion is removed when leaving N/A |
+| `nok_notes_default` | Suggest this observation on NOK when the editor has no custom note. |
+| `assessment_required` | Require an explicit test result at closure. MAN.14 permits an unavailable reading alongside the selected OK/NOK result. |
 | `notes_button_hidden` | Hide the observation toggle; required fields still open automatically |
 | `notes_visible` | Keep the observation field visible, including FIN.02 without general media controls |
 | `supports_signature` | Allow a signer name and referenced signature evidence |
@@ -79,7 +81,7 @@ to make an old report pass. PDF/ZIP must retain the entire observation across pa
 - **SEG.07 — Observações gerais de segurança:** optional note and media, no status buttons.
 - **SITE.06 — Observações gerais do local:** optional note, photographs and videos, no status buttons.
 - **QVE.14 — QVE - Observações gerais:** optional note, photographs and videos, no status buttons.
-- **MAN.22 — Observações gerais da manutenção:** optional note, photographs and videos, no status
+- **MAN.24 — Observações gerais da manutenção:** optional note, photographs and videos, no status
   buttons.
 - **EST.04:** accepts multiple charger/dispenser serial numbers in one text field; photograph is
   optional.
@@ -87,14 +89,17 @@ to make an old report pass. PDF/ZIP must retain the entire observation across pa
 - **CARG.07:** optional general observations, photographs and videos, no status buttons.
 - **FIN.02:** general media controls are hidden; notes and dedicated signature controls remain available.
 - **MAN.02:** OK/NOK/N/A; NOK requires an observation, N/A does not.
-- **MAN.12:** requires an entered current-trip result or N/A, with a photograph when applicable. N/A requires an observation but exempts the photograph.
+- **MAN.12:** configured trip time in integer milliseconds or NA. A photograph is optional.
+- **MAN.13:** requires an entered current-trip result or N/A, with a photograph when applicable. N/A requires an observation but exempts the photograph.
   OK/NOK is an independent evaluation and cannot fill the value.
-- **MAN.14–MAN.17:** require a manually entered insulation result or N/A. Instrument text such as
+- **MAN.14:** measured trip time in integer milliseconds or NA, with a technician-selected OK/NOK/N/A. OK and NOK require a photograph. NOK and N/A require an observation. A test marked NOK may have an unavailable reading. N/A exempts the photograph.
+
+- **MAN.16–MAN.19:** require a manually entered insulation result or N/A. Instrument text such as
   `>500 MΩ` or `OL` remains possible; do not impose the voltage grammar on these fields.
-- **MAN.18:** numeric earth resistance in Ω or N/A, with independent OK/NOK. Changing the evaluation
+- **MAN.20:** numeric earth resistance in Ω or N/A, with independent OK/NOK. Changing the evaluation
   preserves the reading; valid MAN.11 triggers recalculation when either reading changes. A literal OK/NOK value
   alone cannot satisfy closure.
-- **MAN.19:** status choices OK/NOK/N/A.
+- **MAN.21:** status choices OK/NOK/N/A.
 
 NOK normally requires an observation when selected as the value or separate assessment, including SEG.02–SEG.06. Selecting N/A clears an independent assessment. Returning from N/A to an
 evaluation requires re-entering the reading. An empty temporary numeric edit does not silently
@@ -108,11 +113,11 @@ For the representation of a saved reading in an export, see the [PDF formatter](
 | Follow a stored reading | Client source | Server source |
 | --- | --- | --- |
 | Parse the number and unit, format the value and check voltage limits | [Measurements.h](../../App/app/src/Measurements.h) | [measurements.py](../../Server/server/app/measurements.py) |
-| Calculate MAN.12 and MAN.18 assessments and track suggested observations | [MaintenanceRules.h](../../App/app/src/MaintenanceRules.h) | [maintenance_rules.py](../../Server/server/app/maintenance_rules.py) |
-| Upgrade an editable v6 report, including legacy current readings, notes and photo checkpoints | [MaintenanceMigration.h](../../App/app/src/MaintenanceMigration.h) | [maintenance_migration.py](../../Server/server/app/maintenance_migration.py) |
+| Calculate MAN.13 and MAN.20 assessments and track suggested observations | [MaintenanceRules.h](../../App/app/src/MaintenanceRules.h) | [maintenance_rules.py](../../Server/server/app/maintenance_rules.py) |
+| Upgrade an editable v6 or v7 report, including legacy current readings, notes and photo checkpoints | [MaintenanceMigration.h](../../App/app/src/MaintenanceMigration.h) | [maintenance_migration.py](../../Server/server/app/maintenance_migration.py) |
 
 Current MAN keys reuse legacy PC02 rules where their meanings coincide. Keep these mappings stable
-for saved reports. MAN.11 and MAN.12 have their own mA grammar. The shared fixtures cover
+for saved reports. MAN.11 and MAN.13 have their own mA grammar. The shared fixtures cover
 [measurement formats](../shared/measurement-cases.json)
 and [calculated assessment boundaries](../shared/maintenance-cases.json).
 
@@ -121,8 +126,9 @@ and [calculated assessment boundaries](../shared/maintenance-cases.json).
 | MAN.04–MAN.06 | Up to 3 integer digits and 2 decimals; V; 360–440 inclusive is in range |
 | MAN.07–MAN.09 | Up to 3 integer digits and 2 decimals; V; 207–253 inclusive is in range |
 | MAN.10 | Up to 3 integer digits and 2 decimals; V; 50 or higher is flagged out of range |
-| MAN.11–MAN.12 | Up to 6 integer digits, no decimals, mA; configured MAN.11 must exceed zero at closure |
-| MAN.18 | Up to 5 integer digits and 2 decimals; Ω; automatic comparison against 50 / (MAN.11 / 1000), with the temporary criterion described below |
+| MAN.11 and MAN.13 | Up to 6 integer digits, no decimals, mA; configured MAN.11 must exceed zero at closure |
+| MAN.12 and MAN.14 | 0–999999 ms, whole milliseconds or NA. The form shows `1s = 1000ms`. |
+| MAN.20 | Up to 5 integer digits and 2 decimals; Ω; automatic comparison against 50 / (MAN.11 / 1000), with the temporary criterion described below |
 
 Decimal point or comma is accepted; display normalizes to comma and unit. An out-of-range voltage
 remains recordable and is marked in the interface/PDF. It is not rejected merely because it is
@@ -132,10 +138,10 @@ finished value.
 ## Required photographs and connectors
 
 The template's required-photo items are SEG.01, SITE.02–SITE.04, QVE.01/QVE.04,
-EST.01/EST.05/EST.06/EST.13/EST.16, MAN.04–MAN.10/MAN.12/MAN.14–MAN.18/MAN.21, each generated CARG.01.xx, CARG.05 and
-FIN.01. N/A exempts a photograph, including MAN.12.
-MAN.14–18 require a photograph for either OK or NOK and an observation for N/A. Any mandatory
-evidence requirement always means a photograph; videos never satisfy it. Editable v6 drafts migrate to v7 on client and server. Already closed snapshots remain intact; an administrator correction copy adopts v7 before editing.
+EST.01/EST.05/EST.06/EST.13/EST.16, MAN.04–MAN.10/MAN.13/MAN.14/MAN.16–MAN.20/MAN.23, each generated CARG.01.xx, CARG.05 and
+FIN.01. N/A exempts a photograph, including for MAN.13 and MAN.14.
+MAN.16–20 require a photograph for either OK or NOK and an observation for N/A. Any mandatory
+evidence requirement always means a photograph; videos never satisfy it. Editable drafts and administrator correction copies upgrade to v8 on both client and server. Historical closed snapshots keep their original form.
 
 Connector configuration expands one CARG.01.xx per physical connector, including repeated types.
 The displayed Type 2 name is **AC Type 2**. Import and connector parsing continue to accept
@@ -154,8 +160,9 @@ questions.
 
 ## Template history and station identity
 
-New reports use template v7. Editable v6 reports, including correction copies of closed reports,
-upgrade atomically: MAN.21 general notes/evidence move to MAN.22; EST.10's full answer is archived
+Preventive, corrective and commissioning reports use v8. When a v7 draft or closed-report correction opens, the old MAN.12 current reading moves to MAN.13 and old MAN.13–MAN.22 move to MAN.15–MAN.24. Answers, notes and evidence follow their question. The two new times start empty. Both must be answered before closure or replacement. A correction leaves its closed original available until the server accepts the replacement. PDF and ZIP use the accepted report’s own form version, units, assessments and evidence checkpoints.
+
+Earlier editable reports pass through v7 on their way to v8. In the v6 → v7 step, MAN.21 general notes/evidence move to MAN.22; EST.10's full answer is archived
 under `payload.retired_answers`, its notes/evidence move to EST.18. New MAN.21 needs after-maintenance
 photographs (or an N/A observation). EST.01 includes before-cleaning views, EST.13 only tariff and
 EST.16 only DGEG stickers. EST.15 uses TPM for the payment terminal and suggests `Sem TPM` for N/A.
@@ -167,10 +174,10 @@ retains the original while the current reading becomes empty for confirmation. B
 in-flight payloads receive the same projection. Closed originals remain unchanged until a validated
 correction commits; existing revisions and ownership checks still apply.
 
-Already-closed offline v6 reports use `frozen_history: true` during staged draft/evidence/closure
+Already-closed offline v6 and v7 reports use `frozen_history: true` during staged draft/evidence/closure
 upload. The server marks `template.frozen_upload` until closure; this staging record cannot be edited
 or converted by another device. The immutable v6 template is retained in `shared/checklist-v6.json`.
-New editable requests must use v7. This is not permission to create new v6 interventions.
+The v7 snapshot is retained in [checklist-v7.json](../shared/checklist-v7.json). New editable reports use v8.
 
 Corrections of pre-v6 closed reports also adopt the current form. Since older IDs could mean
 different questions, previous values and notes become separate optional `ANT` notes fields,
@@ -187,7 +194,7 @@ fields.
 ## Copy provenance and evidence
 
 QVE copying covers the entire QVE group, including QVE.14. Measurement copying covers only
-MAN.04–MAN.10, not all MAN fields or MAN.21/MAN.22. Sources must be another charger in the same contract.
+MAN.04–MAN.10, not all MAN fields or MAN.23/MAN.24. Sources must be another charger in the same contract.
 The source remains unchanged; new evidence IDs/files are staged and committed atomically for the
 target group after successful preparation.
 
@@ -220,15 +227,15 @@ state are excluded. Exporting does not change the report's owner, status, revisi
 
 ## N/A observations and suggestions
 
-N/A requires an observation in SEG.01/02/04, SITE.02–04, QVE.02/04/09–12, EST.01/16/17,
-MAN.12–18/20, each CARG.01 connector and CARG.05. `na_notes_default` supplies an editable
+N/A requires an observation in SEG.01/02/04, SITE.02–04, QVE.02/04/09–12, EST.01/15/16/17,
+MAN.13–20/22/23, each CARG.01 connector and CARG.05. `na_notes_default` supplies an editable
 suggestion only on transition into N/A with empty notes. Existing notes are preserved; clearing
 a suggestion remains possible and leaves the item pending. The server validates the submitted
 observation without generating an unconfirmed explanation.
 
 When leaving N/A (OK, NOK or clearing), the client removes a note only when its stored suggestion
 marker identifies it as untouched. Generated CARG.01 connector items inherit
-“Veículo usado não compatível”. MAN.11/12 use “intensidade”; MAN.18 displays NA in its value field
+“Veículo usado não compatível”. MAN.11/13 use “intensidade”; MAN.20 displays NA in its value field
 when N/A is selected, retaining the existing not-applicable storage representation.
 
 QVE.03 has an optional N/A suggestion; it does not require an N/A observation. Legacy free text
@@ -236,7 +243,7 @@ in a status item (such as MAN.02) stays available until the technician chooses O
 review, local closure and the server reject other status values rather than closing locally and
 failing only on upload.
 
-FIN.02 requires a technician signature to close current v6 reports. Unsigned drafts can be saved. The signature must match the technician name and reference a PNG attached to FIN.02; changing the name requires signing again. Existing v6 drafts receive this rule; closed history is preserved.
+FIN.02 requires a technician signature to close current reports. Unsigned drafts can be saved. The signature must match the technician name and reference a PNG attached to FIN.02; changing the name requires signing again. Migrated drafts retain the signature requirement. Closed originals keep their history.
 
 ## Administrator correction of closed reports
 
@@ -360,15 +367,15 @@ preserve copied spaces and canonical omega without changing PDF offsets. The sha
 measurement formatter follows the app's validated rules; run measurement/PDF tests
 when those rules change. Update and publish all shared files together.
 
-## Calculated assessments and suggested observations (v7)
+## Calculated assessments and suggested observations (v8)
 
-MAN.12 is NOK at or below 0.5 × MAN.11 or at or above 1.05 × MAN.11, including both endpoints.
-MAN.18 is NOK when R > 50 / (MAN.11 / 1000); equality is accepted. Otherwise it is OK, with the
-high-earth observation when R > 50 Ω. Exact integer cross-products avoid rounding at boundaries.
+MAN.13 is NOK at or below 0.5 × MAN.11 or at or above 1.05 × MAN.11, including both endpoints.
+MAN.20 is NOK when R > 50 / (MAN.11 / 1000); equality is accepted. Otherwise it is OK, with the
+high-earth observation when R > 50 Ω. MAN.13 and MAN.14 suggest “Proteção diferencial não dispara” for NOK and “Não testado devido a veículo em carga” for N/A. MAN.14 records the technician’s assessment. Exact integer cross-products avoid rounding at boundaries.
 Both implementations share `maintenance-cases.json`; the server recomputes the assessment even if a
 client sends OK. Invalid/NA/zero configured current never enters division or generates a result.
 
-The MAN.18 criterion hint is hidden in the form, including saved templates (user request,
+The MAN.20 criterion hint is hidden in the form, including saved templates (user request,
 2026-11-17). Removing this display text does not alter the calculation or validation rules.
 The 50 V criterion is temporary, per user instruction. RTIEBT 413.1.4.2 defines the TT condition
 RA × Ia ≤ 50 V; RA includes electrode/protective-conductor resistance and Ia is IΔn for an RCD.

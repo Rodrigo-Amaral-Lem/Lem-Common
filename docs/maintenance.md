@@ -435,3 +435,9 @@ evidence contracts. Checklist 7 and the database formats carry forward.
 The minimum client is 0.9.1. Clients from 0.9.1 through 0.10.0 receive an update
 notice. Update the API and set `LEM_LATEST_CLIENT_VERSION=0.11.0` before
 distributing the new client.
+
+### Checklist v8 and administrative recovery in 0.11.1
+
+App/API, minimum client and latest client are 0.11.1, with Android code 197. Earlier apps interpret the v8 MAN identifiers and units differently. Update the API and both compatibility settings together, then install the app over the existing profile to preserve local drafts and evidence.
+
+Use the [report contract](report-contract.md#template-history-and-station-identity) to map v7 answers and evidence to v8. Exercise correction and PDF/ZIP export for preventive, corrective and commissioning reports. Test the last recoverable instant and the exact UTC deadline for the 48-hour request and 14-day membership periods. Include recovery by preventive Excel reimport and independent request/coverage deadlines.
