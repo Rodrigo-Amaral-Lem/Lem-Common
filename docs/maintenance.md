@@ -447,3 +447,5 @@ refreshed revision. Test lost draft and photo acknowledgements and a pending his
 from an unchanged local profile.
 
 Use the [report contract](report-contract.md#template-history-and-station-identity) to map v7 answers and evidence to v8. Exercise correction and PDF/ZIP export for preventive, corrective and commissioning reports. Test the last recoverable instant and the exact UTC deadline for the 48-hour request and 14-day membership periods. Include recovery by preventive Excel reimport and independent request/coverage deadlines.
+
+Release 0.12.0 consolidates the Contratos report filter and advances Android to code 199. The filter reads existing contract summaries. The minimum client remains 0.11.2 and checklist v8 remains current. Update the server ceiling to 0.12.0 before distributing the client.

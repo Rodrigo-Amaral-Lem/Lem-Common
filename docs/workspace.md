@@ -56,7 +56,7 @@ Do not copy a component snapshot over Common without reviewing why it differs.
 
 ## Version and branding ownership
 
-The current application/API, minimum client and latest client are `0.11.2`. Android uses version code 198 and all three intervention types use checklist v8. Earlier clients receive the upgrade explanation at login and on authenticated requests. See the [version policy](maintenance.md#version-policy).
+The application/API and latest client are `0.12.0`. The minimum client is `0.11.2`; that version can log in and receives an update notice. Android uses version code 199 and all three intervention types use checklist v8. Clients older than 0.11.2 receive the upgrade explanation at login and on authenticated requests. See the [version policy](maintenance.md#version-policy).
 
 Brand assets must be deliberately incorporated into the responsible repository with their usage
 and provenance recorded. Adding an image to a developer's local folders does not include it in
